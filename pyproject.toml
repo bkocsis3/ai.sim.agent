@@ -1,0 +1,29 @@
+[project]
+name = "AI.Sim.Agent"
+version = "1.0"
+description = "ai agent to play AI.Sim.Game"
+authors = [{ name = "Bruce" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "langchain",
+    "langchain-openai",
+    "langgraph",
+    "python-dotenv",
+    "playwright"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
