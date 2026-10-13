@@ -91,4 +91,4 @@ world.players.find(player => player.name === "AI_Agent").checkLevelUp = function
 }
 
 // log to game that the ai agent has been injected
-uiLog("ai has been injected");
+uiLog(">> ai has been injected");
