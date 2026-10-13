@@ -83,16 +83,6 @@ tests/            Python tests
 
 The system prompt in `src/ai/prompts/survive.md` asks the agent to choose exactly one action (`gather`, `hunt`, or `wander`) and one upgrade (`attack`, `charm`, `intelligence`, `maxHealth`, or `speed`). The tools in `src/ai/tools/` return JavaScript snippets that update the injected player's state in the game.
 
-## Tests
-
-Install the development dependency with the setup command, then run:
-
-```bash
-python -m pytest
-```
-
-The checked-in tests currently import `cal.tools.math_tools`, a module that is not part of this project. Update those test imports and fixtures to match the `ai` package before treating the test results as validation of this application.
-
 ## Notes
 
 - Run commands from the repository root: the controller reads its JavaScript files using paths relative to that directory.
