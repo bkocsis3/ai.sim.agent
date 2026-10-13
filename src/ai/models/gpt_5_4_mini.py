@@ -1,5 +1,5 @@
 from langchain_openai import ChatOpenAI
-import config.settings as settings
+from ai.config import settings
 
 def get_gpt_5_4_mini():
     return ChatOpenAI(

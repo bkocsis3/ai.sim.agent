@@ -9,8 +9,16 @@ world.players.at(-1).name = "AI_Agent";
 world.players.find(player => player.name === "AI_Agent").baseColor = "DarkMagenta";
 world.players.find(player => player.name === "AI_Agent").flashColor = "Fuchsia";
 
+// add attributes to AI agent
+world.players.find(player => player.name === "AI_Agent").lvlUpChoice = "attack";
+world.players.find(player => player.name === "AI_Agent").actionState = "gather";
+
 // mod tick function
 world.players.find(player => player.name === "AI_Agent").tick = function tick(world) {
+    // eat if hungry
+    if (this.health < (this.maxHealth * .5) && this.food > 0) {this.eat();}
+    // level up if possible
+    this.checkLevelUp(this.lvlUpChoice);
     // run scheduled
     this.runScheduledTasks();
     this.tickCounter++;
@@ -25,13 +33,29 @@ world.players.find(player => player.name === "AI_Agent").tick = function tick(wo
     // remove if killed
     if (this.health <= 0) {
       world.killPlayer(this);
-      return;working
+      return;
     }
-    // movement cooldown based on speed
-    this.cooldown -= this.speed;    
+    // movement based on speed
+    this.cooldown -= this.speed;
     if (this.cooldown <= 0) {
         this.cooldown = world.plannedTPS || 1; // reset based on TPS
-    }    
+        switch (this.actionState) {
+        case "gather":
+            const nearest = world.findNearestResource(this);
+            if (nearest) {
+                this.moveToward(world, nearest.x, nearest.y);
+                return;
+            }
+        case "hunt":
+            const enemy = world.findNearestEnemy(this);
+            if (enemy) {
+                this.moveToward(world, enemy.x, enemy.y);
+                return;
+            }
+        case "wander":
+            this.wander(world);
+        }
+    }
 };
 
 // mod level up function
@@ -65,3 +89,6 @@ world.players.find(player => player.name === "AI_Agent").checkLevelUp = function
         }
     }
 }
+
+// log to game that the ai agent has been injected
+uiLog("ai has been injected");
