@@ -32,7 +32,9 @@ Consider anything relevant to survival, exploration, growth, combat readiness, c
   "food": 0,
   "kills": 0
   "actionState": "gather",
-  "lvlUpChoice": "attack"
+  "lvlUpChoice": "attack",
+  "playerCount": 5,
+  "resourceCount": 20
 }
 
 ---
