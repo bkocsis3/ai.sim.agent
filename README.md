@@ -12,11 +12,11 @@ AI.Sim.Agent is a Python agent that plays [AI.Sim.Game](https://bkocsis3.github.
 
 Run these commands from the repository root.
 
-### Windows PowerShell
+### Windows Command Prompt
 
 ```powershell
 py -m venv venv
-.\venv\Scripts\Activate.ps1
+venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 python -m playwright install chromium
