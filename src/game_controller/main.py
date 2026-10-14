@@ -52,15 +52,21 @@ def main():
         ai_state_code = Path("src/game_controller/scripts/ai_state.js").read_text(encoding="utf-8")
         player_count_code = Path("src/game_controller/scripts/player_count.js").read_text(encoding="utf-8")
         resource_count_code = Path("src/game_controller/scripts/resource_count.js").read_text(encoding="utf-8")
+        logbox_decor_code = Path("src/game_controller/scripts/logbox_decor.js").read_text(encoding="utf-8")
 
         loop_count = 0
 
         ### Main loop to interact with the agent and the game
         while True:
+            ### Break the loop if the agent is dead or if the loop count exceeds a certain threshold
+            if loop_count >= 4: 
+                print(f"Maximum iteration has been reached. Stopping AI agent...\n")
+                break
+
             ### Get ai state
             ai_state = page.evaluate(ai_state_code)
             if not ai_state:
-                print(f"Failed to retrieve AI state. AI may have died.\n")
+                print(f"Failed to retrieve AI agent state. Agent may have died.\n")
                 break
             filtered_ai_state = {field: ai_state[field] for field in fields}
 
@@ -76,12 +82,7 @@ def main():
             }
             print(f"Current state:\n {combined_state}\n" )
 
-            ### Break the loop if the agent is dead
-            if ai_state["health"] <= 0 or loop_count >= 5: 
-                print(f"AI has died or reached maximum iterations.\n")
-                break
-
-            ### Invoke the agent with the ai state
+            ### Invoke the agent
             response = agent.invoke({
                 "messages": [
                     {"role": "user", "content": json.dumps(combined_state, indent=2)}
@@ -89,21 +90,31 @@ def main():
                 "tools": agent,
                 "tool_choice": "auto"
             })
-            
-            ### Get the agent's response
-            answer = response["messages"][-1].content
-            print(f"Agent's response:\n {answer}\n")
 
-            ### Send the agent's response to the game
+            ### Get reasoning
+            reasoning = response["messages"][-1].content
+            
+            ### Get tool returns
+            combined_tool_msg_content = "".join(
+                msg.content
+                for msg in response["messages"]
+                if msg.__class__.__name__ == "ToolMessage"
+            )
+
+            ### Craft answer code
+            answer_code = logbox_decor_code + combined_tool_msg_content + reasoning + logbox_decor_code
+            print(f"Answer code:\n {answer_code}\n")
+
+            ### Send answer code to the game
             try:
-                page.evaluate(answer)
-                time.sleep(30) # Wait for 30 seconds before the next iteration
+                page.evaluate(answer_code)
+                time.sleep(15) # Wait for 15 seconds before the next iteration
             except Exception as e:
                 print(f"Error occurred while evaluating answer: {e}\n")
 
             ### Increment the loop count
             loop_count += 1
-            print(f"Iteration: {loop_count}\n")
+            print(f"Iteration: {loop_count} complete\n")
 
 if __name__ == "__main__":
     main()
