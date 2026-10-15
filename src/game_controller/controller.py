@@ -5,7 +5,7 @@ from playwright.async_api import async_playwright
 from ai.agents.agent import create_my_agent
 import sys
 
-def safePrint(msg: str):
+def safe_print(msg: str):
     # Erase the current input line completely
     sys.stdout.write("\033[2K\r")
     # Print the log on its own line
@@ -24,17 +24,25 @@ class GameController:
         self.ai_task = None
         self.alive = False
         self.stop_loop = False
-        self.max_iteration = 12
-        self.current_iteration = self.max_iteration
+        self.max_iterations = 12
+        self.remaining_iteration = self.max_iterations
         self.iteration_delay = 15
         self.logs = []
 
+        self.logbox_decor_code = Path("src/game_controller/scripts/logbox_decor.js").read_text()
         self.ai_state_code = Path("src/game_controller/scripts/ai_state.js").read_text()
         self.player_count_code = Path("src/game_controller/scripts/player_count.js").read_text()
         self.resource_count_code = Path("src/game_controller/scripts/resource_count.js").read_text()
-        self.logbox_decor_code = Path("src/game_controller/scripts/logbox_decor.js").read_text()
-        self.injection_code = Path("src/game_controller/scripts/ai_injection.js").read_text()
-        self.removal_code = Path("src/game_controller/scripts/ai_removal.js").read_text()
+        self.injection_code = (
+            self.logbox_decor_code + 
+            Path("src/game_controller/scripts/ai_injection.js").read_text() +
+            self.logbox_decor_code
+        )
+        self.removal_code = (
+            self.logbox_decor_code + 
+            Path("src/game_controller/scripts/ai_removal.js").read_text() +
+            self.logbox_decor_code 
+        )
 
     async def start_game(self):
         if self.browser:
@@ -62,11 +70,11 @@ class GameController:
 
         ai_state = await self.page.evaluate(self.ai_state_code)
         if ai_state:
-            print("\tAI already alive.")
+            print("\tAI agent is already alive.")
             return
 
         print("\tInjecting AI...")
-        self.current_iteration = self.max_iteration
+        self.remaining_iterations = self.max_iterations
         await self.page.evaluate(self.injection_code)
         await asyncio.sleep(2)
 
@@ -81,7 +89,7 @@ class GameController:
 
     async def start_ai_loop(self):
         if self.ai_task and not self.ai_task.done():
-            print("\tAI loop already running.")
+            print("\tAI loop is already running.")
             return
 
         self.stop_loop = False
@@ -98,15 +106,15 @@ class GameController:
         ]
 
         while not self.stop_loop:
-            if self.current_iteration == 0:
+            if self.remaining_iterations == 0:
                 await self.page.evaluate(self.removal_code)
-                safePrint("Max iterations reached. Type 'inject ai' to restart or 'quit' to exit.")
+                safe_print("Max iterations reached. Type 'inject ai' to restart or 'quit' to exit.")
                 return
-            self.current_iteration -= 1
+            self.remaining_iterations -= 1        
 
             ai_state = await self.page.evaluate(self.ai_state_code)
             if not ai_state:
-                safePrint("AI died. Type 'inject ai' to restart or 'quit' to exit.")
+                safe_print("AI agent died. Type 'inject ai' to restart or 'quit' to exit.")
                 self.alive = False
                 return
 
@@ -144,16 +152,17 @@ class GameController:
 
             try:
                 await self.page.evaluate(answer_code)
-                safePrint(reasoning)
+                safe_print(reasoning)
                 await asyncio.sleep(self.iteration_delay)
             except Exception as e:
-                safePrint(f"Error evaluating answer: {e}")
+                safe_print(f"Error evaluating answer: {e}")
+                safe_print("AI agent likely died mid iteration. Type 'inject ai' to restart or 'quit' to exit.")
                 return
 
         print("\tAI loop stopped.")
 
     async def quit(self):
-        print("\tQuitting game...")
+        print("\tClosing...")
         self.stop_loop = True
 
         if self.ai_task:
@@ -165,4 +174,4 @@ class GameController:
         if self.playwright:
             await self.playwright.stop()
 
-        print("\tGame closed.")
+        print("\tClosed.")
