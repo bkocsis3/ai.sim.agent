@@ -50,9 +50,19 @@ From the repository root, with the virtual environment active:
 python -m game_controller.main
 ```
 
-The controller opens a visible Chromium window and navigates to the hosted game. It injects a player named `AI_Agent`, reads that player's state plus the player and resource counts, and asks the model to choose one action and one level-up option. The returned JavaScript is evaluated in the game page.
+The game controller uses an interactive command prompt:
 
-The current controller runs for at most five iterations and waits 30 seconds after each action. It prints the state and the agent's response to the terminal. Close the browser or interrupt the Python process to stop early.
+```text
+start game   Open Chromium and load AI.Sim.Game
+inject ai    Add AI_Agent and start the agent loop
+quit         Stop the loop, close the browser, and exit
+```
+
+Start the game before injecting the AI. The controller reads the AI player's state, along with player and resource counts, then asks the model to choose an action and a level-up option. It evaluates the returned JavaScript in the game page and prints the agent's response in the terminal.
+
+The loop runs for up to 12 iterations, with a 15-second delay between actions. When the AI dies or reaches the iteration limit, enter `inject ai` to restart it, or `quit` to close the game. The CLI remains available between iterations; handling a command may pause while the model is generating a response.
+
+The controller uses async Playwright and an asyncio task for the game loop. Type `quit` to shut down cleanly rather than closing the browser directly.
 
 ## Interactive Agent Input
 
@@ -76,7 +86,7 @@ src/
 		tools/        Game actions and level-up choices
 		workflows/    Placeholder for future graph workflows
 	game_controller/
-		main.py       Playwright game loop
+		main.py       Interactive async game-controller CLI
 		scripts/      JavaScript for injection and game-state queries
 tests/            Python tests
 ```
