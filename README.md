@@ -2,6 +2,15 @@
 
 AI.Sim.Agent is a Python agent that plays [AI.Sim.Game](https://bkocsis3.github.io/ai.sim.game). It uses a LangChain agent backed by OpenAI's `gpt-5.4-mini` model to choose an in-game action and a character upgrade. Playwright opens the game in Chromium, adds the AI player, reads the game state, and executes the JavaScript returned by the agent.
 
+# Screenshots
+From the game:
+
+![Game](/screenshots/game.png)
+
+From the CLI:
+
+![Game Controller](/screenshots/game-controller.png?raw=true)
+
 ## Requirements
 
 - Python 3.10 or newer
@@ -88,7 +97,7 @@ src/
 	game_controller/
 		main.py       Interactive async game-controller CLI
 		scripts/      JavaScript for injection and game-state queries
-tests/            Python tests
+tests/                Placeholder for future tests
 ```
 
 The system prompt in `src/ai/prompts/survive.md` asks the agent to choose exactly one action (`gather`, `hunt`, or `wander`) and one upgrade (`attack`, `charm`, `intelligence`, `maxHealth`, or `speed`). The tools in `src/ai/tools/` return JavaScript snippets that update the injected player's state in the game.
