@@ -1,20 +1,22 @@
 # AI.Sim.Agent
 
-AI.Sim.Agent is a Python agent that plays [AI.Sim.Game](https://bkocsis3.github.io/ai.sim.game). It uses a LangChain agent backed by OpenAI's `gpt-5.4-mini` model to choose an in-game action and a character upgrade. Playwright opens the game in Chromium, adds the AI player, reads the game state, and executes the JavaScript returned by the agent.
+This repo provides a customizable AI agent that gets injected into [AI.Sim.Lab](https://bkocsis3.github.io/ai.sim.lab). It currently uses a LangChain agent backed by OpenAI's `gpt-5.4-mini` model to choose actions and  character upgrades. Playwright opens the simulation in Chromium, adds the AI agent, reads the simulation state, and executes the JavaScript returned by the agent's choices.
+
+The main purpose of this repo is to experiment and learn how different promts, LLMs, tools, memory, etc affect agent behavior.
 
 # Screenshots
-From the game:
+From the Lab:
 
-![Game](/screenshots/game.png)
+![Lab](/screenshots/lab.png)
 
 From the CLI:
 
-![Game Controller](/screenshots/game-controller.png?raw=true)
+![CLI](/screenshots/clix.png?raw=true)
 
 ## Requirements
 
 - Python 3.10 or newer
-- An OpenAI API key with access to `gpt-5.4-mini`
+- An OpenAI API key
 - A working internet connection
 
 ## Setup
@@ -51,37 +53,37 @@ OPENAI_API_KEY=your_openai_api_key
 
 Keep this file private and do not commit your API key. The application loads this path when run from the repository root.
 
-## Run the Game Agent
+## Run the Agent
 
 From the repository root, with the virtual environment active:
 
 ```bash
-python -m game_controller.main
+python -m controller.main
 ```
 
-The game controller uses an interactive command prompt:
+The controller uses an interactive command prompt:
 
 ```text
-start game   Open Chromium and load AI.Sim.Game
-inject ai    Add AI_Agent and start the agent loop
+start sim    Open Chromium and load AI.Sim.Lab
+inject ai    Add AI agent and start the decision loop
 quit         Stop the loop, close the browser, and exit
 ```
 
-Start the game before injecting the AI. The controller reads the AI player's state, along with player and resource counts, then asks the model to choose an action and a level-up option. It evaluates the returned JavaScript in the game page and prints the agent's response in the terminal.
+Start the simulation before injecting the AI. The controller reads the AI agent's state, along with player and resource counts, then asks the model to choose an action and a level-up option. It evaluates the returned JavaScript in the simulation and prints the agent's response in the log box.
 
-The loop runs for up to 12 iterations, with a 15-second delay between actions. When the AI dies or reaches the iteration limit, enter `inject ai` to restart it, or `quit` to close the game. The CLI remains available between iterations; handling a command may pause while the model is generating a response.
+The loop runs for up to 12 iterations, with a 15-second delay between actions. When the agent dies or reaches the iteration limit, enter `inject ai` to restart it, or `quit` to close the session. The CLI remains available between iterations; handling a command may pause while the model is generating a response.
 
-The controller uses async Playwright and an asyncio task for the game loop. Type `quit` to shut down cleanly rather than closing the browser directly.
+The controller uses async Playwright and an asyncio task for the decision loop. Type `quit` to shut down cleanly rather than closing the browser directly.
 
 ## Interactive Agent Input
 
-`src/ai/main.py` provides a text-based way to send a JSON state to the agent without opening the game:
+`src/ai/main.py` provides a text-based way to send a JSON state to the agent without opening the simulation:
 
 ```bash
 python src/ai/main.py
 ```
 
-Enter a JSON object representing the agent state at the prompt, or enter `quit` to exit. This mode prints the agent response; it does not execute the response in the game.
+Enter a JSON object representing the agent state at the prompt, or enter `quit` to exit. This mode prints the agent response; it does not execute the response in the lab/simulation.
 
 ## Project Layout
 
@@ -94,16 +96,17 @@ src/
 		prompts/      Agent behavior instructions
 		tools/        Game actions and level-up choices
 		workflows/    Placeholder for future graph workflows
-	game_controller/
-		main.py       Interactive async game-controller CLI
-		scripts/      JavaScript for injection and game-state queries
-tests/            Python tests
+	controller/
+		main.py       Interactive async controller CLI
+		controller.py Injects AI agent and decisions into simulation
+		scripts/      JavaScript for injection and sim-state queries
+tests/                Placeholder for future tests
 ```
 
-The system prompt in `src/ai/prompts/survive.md` asks the agent to choose exactly one action (`gather`, `hunt`, or `wander`) and one upgrade (`attack`, `charm`, `intelligence`, `maxHealth`, or `speed`). The tools in `src/ai/tools/` return JavaScript snippets that update the injected player's state in the game.
+The system prompt in `src/ai/prompts/survive.md` asks the agent to choose exactly one action (`gather`, `hunt`, or `wander`) and one upgrade (`attack`, `charm`, `intelligence`, `maxHealth`, or `speed`). The tools in `src/ai/tools/` return JavaScript snippets that update agent's choices in the simulation.
 
 ## Notes
 
 - Run commands from the repository root: the controller reads its JavaScript files using paths relative to that directory.
-- The game is hosted externally; this project does not include or start the game server.
-- The `ai.workflows.graph` module is currently a placeholder and is not used by the game controller.
+- The lab/simulation is hosted externally; this project does not include or start the lab server.
+- The `ai.workflows.graph` module is currently a placeholder and is not used by the controller.
