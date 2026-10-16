@@ -1,20 +1,20 @@
 import asyncio
-from game_controller.controller import GameController
+from cli.controller import Controller
 
 async def async_input(prompt: str) -> str:
     return await asyncio.to_thread(input, prompt)
 
 async def main():
-    controller = GameController()
+    controller = Controller()
 
-    print("\nGame Controller CLI")
-    print("Commands: start game | inject ai | quit\n")
+    print("\nController")
+    print("Commands: start sim | inject ai | quit\n")
 
     while True:
-        cmd = (await async_input(">> game controller: ")).strip().lower()
+        cmd = (await async_input(">> controller: ")).strip().lower()
 
-        if cmd == "start game":
-            await controller.start_game()
+        if cmd == "start sim":
+            await controller.start_sim()
 
         elif cmd == "inject ai":
             await controller.inject_ai()
@@ -25,7 +25,7 @@ async def main():
 
         else:
             print("\tUnknown command.")
-            print("\tCommands: start game | inject ai | quit")
+            print("\tCommands: start sim | inject ai | quit")
 
 if __name__ == "__main__":
     asyncio.run(main())
