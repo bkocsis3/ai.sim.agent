@@ -97,7 +97,7 @@ src/
 	game_controller/
 		main.py       Interactive async game-controller CLI
 		scripts/      JavaScript for injection and game-state queries
-tests/            Python tests
+tests/                Placeholder for future tests
 ```
 
 The system prompt in `src/ai/prompts/survive.md` asks the agent to choose exactly one action (`gather`, `hunt`, or `wander`) and one upgrade (`attack`, `charm`, `intelligence`, `maxHealth`, or `speed`). The tools in `src/ai/tools/` return JavaScript snippets that update the injected player's state in the game.
