@@ -1,8 +1,8 @@
 # AI.Sim.Agent
 
-This repo provides a customizable AI agent that gets injected into [AI.Sim.Lab](https://bkocsis3.github.io/ai.sim.lab). It currently uses a LangChain agent backed by OpenAI's `gpt-5.4-mini` model to choose actions and  character upgrades. Playwright opens the simulation in Chromium, adds the AI agent, reads the simulation state, and executes the JavaScript returned by the agent's choices.
+This repo provides a customizable AI agent that gets injected into [AI.Sim.Lab](https://bkocsis3.github.io/ai.sim.lab). It currently uses a LangChain agent backed by OpenAI's `gpt-5.4-mini` model to choose actions and  character upgrades. Playwright opens the simulation in Chromium, adds the AI agent, reads the simulation state, and executes the JavaScript returned by the agent's decision.
 
-The main purpose of this repo is to experiment and learn how different promts, LLMs, tools, memory, etc affect agent behavior.
+The main purpose of this repo is to experiment and learn how different promts, LLMs, tools, memory, etc affect  behavior.
 
 # Screenshots
 From the Lab:
@@ -11,7 +11,7 @@ From the Lab:
 
 From the CLI:
 
-![CLI](/screenshots/clix.png?raw=true)
+![CLI](/screenshots/cli.png?raw=true)
 
 ## Requirements
 
@@ -58,7 +58,7 @@ Keep this file private and do not commit your API key. The application loads thi
 From the repository root, with the virtual environment active:
 
 ```bash
-python -m controller.main
+python -m cli.main
 ```
 
 The controller uses an interactive command prompt:
@@ -96,7 +96,7 @@ src/
 		prompts/      Agent behavior instructions
 		tools/        Game actions and level-up choices
 		workflows/    Placeholder for future graph workflows
-	controller/
+	cli/
 		main.py       Interactive async controller CLI
 		controller.py Injects AI agent and decisions into simulation
 		scripts/      JavaScript for injection and sim-state queries

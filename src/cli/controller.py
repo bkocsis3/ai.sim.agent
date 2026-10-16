@@ -29,27 +29,27 @@ class Controller:
         self.iteration_delay = 15
         self.logs = []
 
-        self.logbox_decor_code = Path("src/controller/scripts/logbox_decor.js").read_text()
-        self.ai_state_code = Path("src/controller/scripts/ai_state.js").read_text()
-        self.player_count_code = Path("src/controller/scripts/player_count.js").read_text()
-        self.resource_count_code = Path("src/controller/scripts/resource_count.js").read_text()
+        self.logbox_decor_code = Path("src/cli/scripts/logbox_decor.js").read_text()
+        self.ai_state_code = Path("src/cli/scripts/ai_state.js").read_text()
+        self.player_count_code = Path("src/cli/scripts/player_count.js").read_text()
+        self.resource_count_code = Path("src/cli/scripts/resource_count.js").read_text()
         self.injection_code = (
             self.logbox_decor_code + 
-            Path("src/controller/scripts/ai_injection.js").read_text() +
+            Path("src/cli/scripts/ai_injection.js").read_text() +
             self.logbox_decor_code
         )
         self.removal_code = (
             self.logbox_decor_code + 
-            Path("src/controller/scripts/ai_removal.js").read_text() +
+            Path("src/cli/scripts/ai_removal.js").read_text() +
             self.logbox_decor_code 
         )
 
     async def start_sim(self):
         if self.browser:
-            print("\tSim already running.")
+            print("\tSimulation is already running.")
             return
 
-        print("\tStarting sim...")
+        print("\tStarting simulation...")
         self.agent = create_my_agent()
 
         self.playwright = await async_playwright().start()
@@ -61,16 +61,16 @@ class Controller:
         self.page = await self.context.new_page()
 
         await self.page.goto("https://bkocsis3.github.io/ai.sim.lab")
-        print("\tSim loaded.")
+        print("\tSimulation loaded.")
 
     async def inject_ai(self):
         if not self.page:
-            print("\tSim not started.")
+            print("\tSimulation not started.")
             return
 
         ai_state = await self.page.evaluate(self.ai_state_code)
         if ai_state:
-            print("\tAI agent is already alive.")
+            print("\tAI already injected.")
             return
 
         print("\tInjecting AI...")
@@ -82,21 +82,21 @@ class Controller:
         self.alive = bool(ai_state)
 
         if self.alive:
-            print("\tAI injected. Starting loop...")
+            print("\tAI injected. Starting decision loop...")
             await self.start_ai_loop()
         else:
             print("\tAI injection failed.")
 
     async def start_ai_loop(self):
         if self.ai_task and not self.ai_task.done():
-            print("\tAI loop is already running.")
+            print("\tAI decision loop is already running.")
             return
 
         self.stop_loop = False
         self.ai_task = asyncio.create_task(self.run_ai_loop())
 
     async def run_ai_loop(self):
-        print("\tAI loop started.")
+        print("\tAI decision loop started.")
 
         fields = [
             "name", "age", "health", "x", "y", "level", "xp",
@@ -159,10 +159,10 @@ class Controller:
                 safe_print("AI agent likely died mid iteration. Type 'inject ai' to restart or 'quit' to exit.")
                 return
 
-        print("\tAI loop stopped.")
+        print("\tAI decision loop stopped.")
 
     async def quit(self):
-        print("\tClosing...")
+        print("\tClosing controller...")
         self.stop_loop = True
 
         if self.ai_task:
@@ -174,4 +174,4 @@ class Controller:
         if self.playwright:
             await self.playwright.stop()
 
-        print("\tClosed.")
+        print("\tController closed.")

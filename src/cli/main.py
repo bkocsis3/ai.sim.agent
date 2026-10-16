@@ -1,5 +1,5 @@
 import asyncio
-from controller.controller import Controller
+from cli.controller import Controller
 
 async def async_input(prompt: str) -> str:
     return await asyncio.to_thread(input, prompt)
@@ -7,7 +7,7 @@ async def async_input(prompt: str) -> str:
 async def main():
     controller = Controller()
 
-    print("\nController CLI")
+    print("\nController")
     print("Commands: start sim | inject ai | quit\n")
 
     while True:
