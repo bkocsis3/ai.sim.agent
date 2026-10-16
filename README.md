@@ -27,7 +27,7 @@ Run these commands from the repository root.
 
 ```powershell
 py -m venv venv
-venv\Scripts\activate.bat
+venv\Scripts\activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 python -m playwright install chromium
