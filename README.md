@@ -2,7 +2,7 @@
 
 This repo provides a customizable AI agent that gets injected into [AI.Sim.Lab](https://bkocsis3.github.io/ai.sim.lab). It currently uses a LangChain agent backed by OpenAI's `gpt-5.4-mini` model to choose actions and  character upgrades. Playwright opens the simulation in Chromium, adds the AI agent, reads the simulation state, and executes the JavaScript returned by the agent's decision.
 
-The main purpose of this repo is to experiment and learn how different promts, LLMs, tools, memory, etc affect  behavior.
+The main goal of this project is to experiment and learn how different prompts, LLMs, tools, memory, etc affect behavior.
 
 # Screenshots
 From the Lab:
